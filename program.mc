@@ -1,1 +1,1 @@
-char
+#import void char int

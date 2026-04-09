@@ -47,60 +47,72 @@ void tokenize(string codigo) {
         /* Verificación de tokens */
 
         /* Verificación del token char */
-        if (tokens[a] == token_char[0]) {
-            if (tokens[a+1] == token_char[1]) {
-                if (tokens[a+2] == token_char[2]) {
-                    token_char_offset = 4;
+        if (tokens[a] == token_char[0]) { // c
+            if (tokens[a+1] == token_char[1]) { // h
+                if (tokens[a+2] == token_char[2]) { // a
+                    if (tokens[a+3] == token_char[3]) { // r
+                        token_char_offset = 4;
+                        token_char_detectado = true;
+                        cout << "TOKEN CHAR DETECTADO" << endl;
+                    }
                 }
             }
         }
 
-        /*
-        for (int i = 0; i < len_total_de_tokens; ++i) {
-            if ()
-        }
-        */
-
         /* Verificación del token int */
-       // for (auto b : token_int) {
-            // if (a == b) {
-                // token_int_offset++;
-                // cout << token_int_offset;
-            // }
-       // }
+        if (tokens[a] == token_int[0]) { // i
+            if (tokens[a+1] == token_int[1]) { // n
+                if (tokens[a+2] == token_int[2]) { // t
+                    token_int_offset = 3;
+                    token_int_detectado = true;
+                    cout << "TOKEN INT DETECTADO" << endl;
+                }
+            }
+        }
 
-       /* Verificación del token char */
-      //  for (auto b : token_char) {
-           //  if(a == b) {
-               //  token_char_offset++;
-           //  }
-      //  }
+        /* Verificación del token #import */
+        if (tokens[a] == token_import[0]) { // #
+            if (tokens[a+1] == token_import[1]) { // i
+                if (tokens[a+2] == token_import[2]) { // m
+                    if (tokens[a+3] == token_import[3]) { // p
+                        if (tokens[a+4] == token_import[4]) { // o
+                            if (tokens[a+5] == token_import[5]) { // r
+                                if (tokens[a+6] == token_import[6]) { // t
+                                    token_import_offset = 7;
+                                    token_import_detectado = true;
+                                    cout << "TOKEN #IMPORT DETECTADO" << endl;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-       /* Verificación del token #import */
-       // for (auto b : token_import) {
-            // if (a == b) {
-                // token_import_offset++;
-            // }
-       // }
-
-       /* Verificación del token void */
-       // for (auto b : token_void) {
-            // if (a == b) {
-                // token_void_offset++;
-            // }
-       // }
+        /* Verificación del token void */
+        if (tokens[a] == token_void[0]) { // v
+            if (tokens[a+1] == token_void[1]) { // o
+                if (tokens[a+2] == token_void[2]) { // i
+                    if (tokens[a+3] == token_void[3]) { // d
+                        token_void_offset = 4;
+                        token_void_detectado = true;
+                        cout << "TOKEN VOID DETECTADO" << endl;
+                    }
+                }
+            }
+        }
 
     }
 
-    /*
     cout << endl << endl;
-    cout << "Tokens: " << offset << " en total" << endl;
-    */
+    cout << "Tokens: " << offset << " tokens en total" << endl;
 
+    /*
     if (token_int_offset == 3) {cout << "El token int ha sido DETECTADO" << endl; token_int_detectado = true;}
     if (token_char_offset == 4) {cout << "El token char ha sido DETECTADO" << endl; token_char_detectado = true;}
     if (token_import_offset == 7) {cout << "El token #import ha sido DETECTADO" << endl; token_import_detectado = true;}
     if (token_void_offset == 4) {cout << "El token void ha sido DETECTADO" << endl; token_void_detectado = true;}
+    */
 
 }
 
