@@ -1,1 +1,6 @@
-#import void char int
+
+void
+
+start
+    char
+    int

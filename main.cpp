@@ -8,18 +8,21 @@ using namespace std;
 
 vector<char> tokens = {};
 
+vector<char> token_start = {'s', 't', 'a', 'r', 't'};
 vector<char> token_int = {'i', 'n', 't'};
 vector<char> token_char = {'c', 'h', 'a', 'r'};
 vector<char> token_import = {'#', 'i', 'm', 'p', 'o', 'r', 't'};
 vector<char> token_void = {'v', 'o', 'i', 'd'};
 
-int len_total_de_tokens = 18;
+int len_total_de_tokens = token_start.size() + token_int.size() + token_char.size() + token_import.size() + token_void.size();
 
+bool token_start_detectado = false;
 bool token_int_detectado = false;
 bool token_char_detectado = false;
 bool token_import_detectado = false;
 bool token_void_detectado = false;
 
+int token_start_offset = 0;
 int token_int_offset = 0;
 int token_char_offset = 0;
 int token_import_offset = 0;
@@ -27,7 +30,7 @@ int token_void_offset = 0;
 
 int offset = 0;
 
-void tokenize(string codigo) {
+void compile(string codigo) {
     for (auto a : codigo) {
         if (a != ' ') {
             tokens.push_back(a);
@@ -38,7 +41,8 @@ void tokenize(string codigo) {
     }
 
 
-    ofstream Compilado("result.mc");
+    ofstream Compilado("compiled.c");
+    Compilado << "#include <stdio.h>" << endl << endl;
     for (int a = 0; a < tokens.size(); ++a) {
         offset++;
         // Compilado << a;
@@ -54,6 +58,7 @@ void tokenize(string codigo) {
                         token_char_offset = 4;
                         token_char_detectado = true;
                         cout << "TOKEN CHAR DETECTADO" << endl;
+                        Compilado << endl << "    char";
                     }
                 }
             }
@@ -66,6 +71,7 @@ void tokenize(string codigo) {
                     token_int_offset = 3;
                     token_int_detectado = true;
                     cout << "TOKEN INT DETECTADO" << endl;
+                    Compilado << endl << "    int";
                 }
             }
         }
@@ -81,6 +87,7 @@ void tokenize(string codigo) {
                                     token_import_offset = 7;
                                     token_import_detectado = true;
                                     cout << "TOKEN #IMPORT DETECTADO" << endl;
+                                    Compilado << endl << "    #include";
                                 }
                             }
                         }
@@ -97,6 +104,24 @@ void tokenize(string codigo) {
                         token_void_offset = 4;
                         token_void_detectado = true;
                         cout << "TOKEN VOID DETECTADO" << endl;
+                        Compilado << endl << "    void";
+                    }
+                }
+            }
+        }
+
+        /* Verificación del token start */
+        if (tokens[a] == token_start[0]) { // s
+            if (tokens[a+1] == token_start[1]) { // t
+                if (tokens[a+2] == token_start[2]) { // a
+                    if (tokens[a+3] == token_start[3]) { // r
+                        if (tokens[a+4] == token_start[4]) { // t
+                            // if (token_start_detectado) {cerr << "ERROR CRÍTICO, SE HAN DEFINIDO VARIOS PUNTOS DE ENTRADA, SOLO SE PUEDE DEFINIR UN SOLO PUNTO DE ENTRADA" << endl; exit(1);}
+                            token_start_offset = 5;
+                            token_start_detectado = true;
+                            cout << "PUNTO DE ENTRADA DETECTADO" << endl;
+                            Compilado << endl << "int main() {" << endl;
+                        }
                     }
                 }
             }
@@ -104,8 +129,12 @@ void tokenize(string codigo) {
 
     }
 
-    cout << endl << endl;
-    cout << "Tokens: " << offset << " tokens en total" << endl;
+        // Si hemos llegado hasta aquí, es que la primera línea del código fuente, es del punto de entrada, lo cuál en mi lenguaje de programación es correcto, si no es así, error crítico y el programa no se compila
+        cout << endl << endl;
+        cout << "Tokens: " << offset << " tokens en total" << endl;
+
+        Compilado << endl << "}";
+    
 
     /*
     if (token_int_offset == 3) {cout << "El token int ha sido DETECTADO" << endl; token_int_detectado = true;}
@@ -123,7 +152,7 @@ int main() {
     ifstream Archivo("program.mc");
 
     while(getline(Archivo, codigo)) {
-        tokenize(codigo);
+        compile(codigo);
     }
 
 }
