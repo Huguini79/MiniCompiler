@@ -65,16 +65,27 @@ std::vector<Token> tokenize(std::string &CodigoFuente) {
 
     for (int i = 0; i < CodigoFuente.size(); ++i) {
         lexer.pos++;     
+        
         if (std::isalpha(CodigoFuente[i])) {
             buf += CodigoFuente[i];
         } else if (std::isdigit(CodigoFuente[i])) {
             buf += CodigoFuente[i];
-        
-        } else if (std::isspace(CodigoFuente[i]) || CodigoFuente[i] == ';' || CodigoFuente[i] == '{' || CodigoFuente[i] == '}' || CodigoFuente[i] == '(' || CodigoFuente[i] == ')') {
+        }
+
+        else if (CodigoFuente[i] == '=' || CodigoFuente[i] == '>' || CodigoFuente[i] == '-' || CodigoFuente[i] == '+' || CodigoFuente[i] == '-' || CodigoFuente[i] == '*' || CodigoFuente[i] == '/') {
+            buf += CodigoFuente[i];
+        }
+
+        else if (std::isspace(CodigoFuente[i]) || CodigoFuente[i] == ';' || CodigoFuente[i] == ':' || CodigoFuente[i] == '{' || CodigoFuente[i] == '}' || CodigoFuente[i] == '(' || CodigoFuente[i] == ')') {
             
 
             if (buf == "int") {
                 tokens.push_back({buf, TokenType::Keyword, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (buf == "->") {
+                tokens.push_back({buf, TokenType::Operator, lexer.line, lexer.pos});
                 buf = "";
             }
 
@@ -140,6 +151,11 @@ std::vector<Token> tokenize(std::string &CodigoFuente) {
            
             if (CodigoFuente[i] == ';') {
                 tokens.push_back({";", TokenType::Puntuaction, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == ':') {
+                tokens.push_back({":", TokenType::Puntuaction, lexer.line, lexer.pos});
                 buf = "";
             }
 
