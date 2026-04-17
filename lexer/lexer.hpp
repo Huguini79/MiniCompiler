@@ -1,108 +1,207 @@
-//
-// Created by Hugo González Ruiz on 12/04/2026.
-//
-
 #ifndef LEXER_H
 #define LEXER_H
 
 #include <iostream>
-#include <cctype>
-#include <vector>
 #include <string>
+#include <vector>
 
-// Frontend (Lexer)
-
-// Tipos de tokens
 enum TokenType {
-    Identifier, // hola()  cout  declaración de una variable (x = ....)
-    Keyword,    // if  else  do  while
-    Operator, // <= << >> == = + * - /
-    Literal, // 1234567890  Hola
-    Punctuation, // ;  .  ,
+    Identifier,
+    Number,
+    String,
+    Keyword,
+    Puntuaction,
+    Operator,
+    OpenParen,
+    CloseParen,
+    OpenKey,
+    CloseKey,
 };
 
-// Estructura de un token
 struct Token {
+    std::string lexema;
+    TokenType tipo_de_token;
     int line;
     int pos;
-    std::string value; // lexema
-    TokenType type; // Tipo de token
 };
 
 struct Lexer {
     int line;
     int pos;
-    int word_offset;
-    std::string buf;
 };
-
-std::string last_token = "";
 
 struct Lexer lexer;
 
-std::string tokenAString(enum TokenType type) {
-    switch (type) {
-        case 0: return "IDENTIFIER";
-        case 1: return "KEYWORD";
-        case 2: return "OPERATOR";
-        case 3: return "LITERAL";
-        case 4: return "PUNCTUATION";
-        default: return "UNKNOWN";
-    }
-}
-
-bool isNumber(std::string &buffer) {
-    for (auto a : buffer) {
+bool esNumero(std::string &Cadena) {
+    for (auto a : Cadena) {
         if (!isdigit(a)) return false;
     }
-    return !buffer.empty();
+
+    return !Cadena.empty();
+
 }
 
-// Tokenización
-std::vector<Token> tokenize(const std::string &codigo) {
-    std::vector<Token> tokens;
+std::string tipoDeTokenAString(TokenType tipo) {
+    switch(tipo) {
+        case 0: return "TOKEN_IDENTIFIER";
+        case 1: return "TOKEN_NUMBER";
+        case 2: return "TOKEN_STRING";
+        case 3: return "TOKEN_KEYWORD";
+        case 4: return "TOKEN_PUNTUACTION";
+        case 5: return "TOKEN_OPERATOR";
+        case 6: return "TOKEN_OPEN_PAREN";
+        case 7: return "TOKEN_CLOSE_PAREN";
+        case 8: return "TOKEN_OPEN_KEY";
+        case 9: return "TOKEN_CLOSE_KEY";
+        default: return "TOKEN_UNKNOWN";
+    }
+}
+
+std::vector<Token> tokenize(std::string &CodigoFuente) {
+    std::vector<Token> tokens = {};
+    std::string buf = "";
 
     lexer.line++;
 
-    for (int a = 0; a < codigo.size(); ++a) {
-        lexer.pos++;
+    for (int i = 0; i < CodigoFuente.size(); ++i) {
+        lexer.pos++;     
+        if (std::isalpha(CodigoFuente[i])) {
+            buf += CodigoFuente[i];
+        } else if (std::isdigit(CodigoFuente[i])) {
+            buf += CodigoFuente[i];
+        
+        } else if (std::isspace(CodigoFuente[i]) || CodigoFuente[i] == ';' || CodigoFuente[i] == '{' || CodigoFuente[i] == '}' || CodigoFuente[i] == '(' || CodigoFuente[i] == ')') {
+            
 
-        if (std::isalpha(codigo[a])) {
-            lexer.word_offset++;
-
-            lexer.buf += codigo[a];
-
-        } else if (std::isdigit(codigo[a])) {
-            lexer.word_offset++;
-
-            lexer.buf += codigo[a];
-
-        } else if (std::isspace(codigo[a]) || codigo[a] == ';' || codigo[a] == '^') {
-            if (lexer.buf == "int") {
-                tokens.push_back({lexer.line, lexer.pos, "int", TokenType::Keyword});
-                lexer.buf = "";
-                last_token = "int";
+            if (buf == "int") {
+                tokens.push_back({buf, TokenType::Keyword, lexer.line, lexer.pos});
+                buf = "";
             }
 
-            if (lexer.buf == "char") {
-                tokens.push_back({lexer.line, lexer.pos, "char", TokenType::Keyword});
-                lexer.buf = "";
-                last_token = "char";
+            else if (buf == "char") {
+                tokens.push_back({buf, TokenType::Keyword, lexer.line, lexer.pos});
+                buf = "";
             }
 
-            if (isNumber(lexer.buf)) {
-                tokens.push_back({lexer.line, lexer.pos, lexer.buf, TokenType::Literal});
-                lexer.buf = "";
-                last_token = lexer.buf;
+            else if (esNumero(buf)) {
+                tokens.push_back({buf, TokenType::Number, lexer.line, lexer.pos});
+                buf = "";
             }
+
+            else if (buf == "if") {
+                tokens.push_back({buf, TokenType::Keyword, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            else if (buf == "else") {
+                tokens.push_back({buf, TokenType::Keyword, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            else if (buf == "function") {
+                tokens.push_back({buf, TokenType::Keyword, lexer.line, lexer.pos});
+                buf = "";
+            }
+        
+            else if (buf == "return") {
+                tokens.push_back({buf, TokenType::Keyword, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            else if (buf == "==") {
+                tokens.push_back({"==", TokenType::Operator, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            else if (buf == "++") {
+                tokens.push_back({"++", TokenType::Operator, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            else if (buf == "//") {
+                // Los compiladores ignoran los comentarios, en este caso, se supone que toda la línea está comentada, así que hacemos un break para después saltar a la siguiente línea
+                break;
+            }
+
+            else if (buf == "L") {
+                tokens.push_back({buf, TokenType::String, lexer.line, lexer.pos});
+                buf = "";
+
+            }
+
+            else if (buf == "") {
+
+            }
+            
+            else {
+                tokens.push_back({buf, TokenType::Identifier, lexer.line, lexer.pos});
+                buf = "";
+            }
+           
+            if (CodigoFuente[i] == ';') {
+                tokens.push_back({";", TokenType::Puntuaction, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == '.') {
+                tokens.push_back({".", TokenType::Puntuaction, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == ',') {
+                tokens.push_back({",", TokenType::Puntuaction, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == '+') {
+                tokens.push_back({"+", TokenType::Operator, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == '-') {
+                tokens.push_back({"-", TokenType::Operator, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == '*') {
+                tokens.push_back({"*", TokenType::Operator, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == '/') {
+                tokens.push_back({"/", TokenType::Operator, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == '=') {
+                tokens.push_back({"=", TokenType::Operator, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == '(') {
+                tokens.push_back({"(", TokenType::OpenParen, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == ')') {
+                tokens.push_back({")", TokenType::CloseParen, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == '{') {
+                tokens.push_back({"{", TokenType::OpenKey, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            if (CodigoFuente[i] == '}') {
+                tokens.push_back({"}", TokenType::CloseKey, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            
 
         }
 
-        /*else {
-            std::cerr << "Carácter no definido: " << "Valor: " << codigo[a] << " | Linea: " << lexer.line << " | Pos: " << lexer.pos << std::endl;
-            break;
-
-        }*/
     }
 
     lexer.pos = 0;
