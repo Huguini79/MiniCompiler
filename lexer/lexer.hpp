@@ -85,7 +85,7 @@ std::vector<Token> tokenize(std::string &CodigoFuente) {
             }
 
             if (buf == "->") {
-                tokens.push_back({buf, TokenType::Operator, lexer.line, lexer.pos});
+                tokens.push_back({buf, TokenType::Identifier, lexer.line, lexer.pos});
                 buf = "";
             }
 

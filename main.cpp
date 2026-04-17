@@ -20,7 +20,7 @@ int main() {
         std::vector<Token> tokens = tokenize(s);
 
         for (auto a : tokens) {
-            std::cout << "{Lexema: " << a.lexema << " -> Tipo de TOKEN: " << tipoDeTokenAString(a.tipo_de_token) << " | Linea: " << lexer.line << "}" << std::endl;
+            std::cout << "{Lexema: |" << a.lexema << "| Tipo de TOKEN: " << tipoDeTokenAString(a.tipo_de_token) << " | Linea: " << lexer.line << "}" << std::endl;
         }
 
         process(tokens, Compilado);

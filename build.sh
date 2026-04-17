@@ -1,3 +1,3 @@
 clear
-g++ main.cpp -o MiniCompiler
-./MiniCompiler
+g++ main.cpp -o mc
+./mc

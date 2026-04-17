@@ -36,7 +36,7 @@ void process(std::vector<Token> &tokens, std::ofstream &Compilado) {
                 break;
             }
 
-        // Declaración de una variable int con un valor definido;
+        // Declaración de una variable int con un valor definido
         else if (tokens[0].lexema == "int" 
             && tokens[0].tipo_de_token == TokenType::Keyword 
             && tokens[1].tipo_de_token == TokenType::Identifier 
@@ -47,6 +47,15 @@ void process(std::vector<Token> &tokens, std::ofstream &Compilado) {
                 Compilado << "    int " << tokens[1].lexema << " = " << tokens[3].lexema << ";" << std::endl;
                 break;
         }
+
+        // Sobreescribir un valor en una variable int
+        else if (tokens[0].tipo_de_token == TokenType::Identifier
+            && tokens[1].lexema == "="
+            && tokens[1].tipo_de_token == TokenType::Identifier
+            && tokens[2].tipo_de_token == TokenType::Number || tokens[2].tipo_de_token == TokenType::Identifier) {
+                Compilado << "    " << tokens[0].lexema << " = " << tokens[2].lexema << ";" << std::endl;
+                break;
+            }
 
         // Declaración de una función sin parámetros
         else if (tokens[0].lexema == "function"
