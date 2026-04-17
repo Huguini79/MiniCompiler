@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include "lexer/lexer.hpp"
+#include "parser/parser.hpp"
 
 int main() {
     std::ifstream CodigoFuente("program.mc");
@@ -18,6 +19,8 @@ int main() {
         for (auto a : tokens) {
             std::cout << "{Lexema: " << a.lexema << " -> Tipo de TOKEN: " << tipoDeTokenAString(a.tipo_de_token) << " | Linea: " << lexer.line << "}" << std::endl;
         }
+
+        process(tokens);
 
         std::cout << std::endl;
 
