@@ -29,7 +29,9 @@ int main() {
 
     }
 
-    Compilado << "}" << std::endl;
+    if (puntoDeEntrada) {
+        Compilado << "}" << std::endl;
+    }
 
     system("gcc temp.c -o temp");
     std::cout << "PROGRAMA COMPILADO EXITOSAMENTE";

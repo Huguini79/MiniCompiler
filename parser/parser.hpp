@@ -8,6 +8,8 @@
 
 #include "../lexer/lexer.hpp"
 
+bool puntoDeEntrada = false;
+
 void process(std::vector<Token> &tokens, std::ofstream &Compilado) {
     for (int i = 0; i < tokens.size(); ++i) {
         if (tokens[0].lexema == "return" 
@@ -18,41 +20,69 @@ void process(std::vector<Token> &tokens, std::ofstream &Compilado) {
             }
         }
 
-        // Declaración de una variable int 
-        else if (tokens[0].lexema == "int"
-                && tokens[0].tipo_de_token == TokenType::Keyword
+        // Declaración de una variable sin valor definido
+        else if (tokens[0].tipo_de_token == TokenType::Keyword
                 && tokens[1].tipo_de_token == TokenType::Identifier
                 && tokens[2].lexema == ";"
                 && tokens[2].tipo_de_token == TokenType::Puntuaction) {
-                Compilado << "    int " << tokens[1].lexema << ";" << std::endl;
-                break;
+                if (tokens[0].lexema == "int")
+                    Compilado << "    int " << tokens[1].lexema << ";" << std::endl;
+
+                if(tokens[0].lexema == "string")
+                    Compilado << "    char* " << tokens[1].lexema << ";" << std::endl;
+
+                if (tokens[0].lexema == "float")
+                    Compilado << "    float " << tokens[1].lexema << ";" << std::endl;
+                
+            break;
+        
         }
 
         // Declaración del punto de entrada del programa
         else if (tokens[0].lexema == "start"
             && tokens[0].tipo_de_token == TokenType::Identifier
             && tokens[1].tipo_de_token == TokenType::Puntuaction) {
+                puntoDeEntrada = true;
                 Compilado << "int main() {" << std::endl;
                 break;
             }
 
-        // Declaración de una variable int con un valor definido
-        else if (tokens[0].lexema == "int" 
-            && tokens[0].tipo_de_token == TokenType::Keyword 
+        // Incremento de una variable
+        else if (tokens[0].tipo_de_token == TokenType::Identifier
+                && tokens[1].tipo_de_token == TokenType::Operator
+                && tokens[1].lexema == "++") {
+                    Compilado << "    " << tokens[0].lexema << "++" << ";" << std::endl;
+                    break;
+                }
+
+        // Declaración de una variable con un valor definido
+        else if (tokens[0].tipo_de_token == TokenType::Keyword 
             && tokens[1].tipo_de_token == TokenType::Identifier 
-            && tokens[2].lexema == "=" && tokens[2].tipo_de_token == TokenType::Identifier || tokens[2].lexema == "->" && tokens[2].tipo_de_token == TokenType::Identifier
-            && tokens[3].tipo_de_token == TokenType::Number 
-            && tokens[4].lexema == ";" 
+            && tokens[2].lexema == "=" && tokens[2].tipo_de_token == TokenType::Operator || tokens[2].lexema == "->" && tokens[2].tipo_de_token == TokenType::Operator
+            && tokens[3].tipo_de_token == TokenType::Number || tokens[3].tipo_de_token == TokenType::String || tokens[3].tipo_de_token == TokenType::Identifier || tokens[3].tipo_de_token == TokenType::Operator
+            && tokens[4].lexema == ";"
             && tokens[4].tipo_de_token == TokenType::Puntuaction) {
+            if (tokens[0].lexema == "int") {
                 Compilado << "    int " << tokens[1].lexema << " = " << tokens[3].lexema << ";" << std::endl;
-                break;
+
+            }
+            else if (tokens[0].lexema == "string") {
+                Compilado << "    char* " << tokens[1].lexema << " = " << tokens[3].lexema << ";" << std::endl;
+                
+            }
+            else if (tokens[0].lexema == "float") {
+                Compilado << "    float " << tokens[1].lexema << " = " << tokens[3].lexema << ";" << std::endl;
+            
+            }
+
+            break;
         }
 
-        // Sobreescribir un valor en una variable int
+        // Sobreescribir un valor en una variable
         else if (tokens[0].tipo_de_token == TokenType::Identifier
-            && tokens[1].lexema == "="
-            && tokens[1].tipo_de_token == TokenType::Identifier
-            && tokens[2].tipo_de_token == TokenType::Number || tokens[2].tipo_de_token == TokenType::Identifier) {
+            && tokens[1].lexema == "=" || tokens[1].lexema == "->"
+            && tokens[1].tipo_de_token == TokenType::Operator
+            && tokens[2].tipo_de_token == TokenType::Number || tokens[2].tipo_de_token == TokenType::Identifier || tokens[2].tipo_de_token == TokenType::Operator) {
                 Compilado << "    " << tokens[0].lexema << " = " << tokens[2].lexema << ";" << std::endl;
                 break;
             }

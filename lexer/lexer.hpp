@@ -72,7 +72,7 @@ std::vector<Token> tokenize(std::string &CodigoFuente) {
             buf += CodigoFuente[i];
         }
 
-        else if (CodigoFuente[i] == '=' || CodigoFuente[i] == '>' || CodigoFuente[i] == '-' || CodigoFuente[i] == '+' || CodigoFuente[i] == '-' || CodigoFuente[i] == '*' || CodigoFuente[i] == '/') {
+        else if (CodigoFuente[i] == '=' || CodigoFuente[i] == '"' || CodigoFuente[i] == '>' || CodigoFuente[i] == '-' || CodigoFuente[i] == '+' || CodigoFuente[i] == '-' || CodigoFuente[i] == '*' || CodigoFuente[i] == '/') {
             buf += CodigoFuente[i];
         }
 
@@ -85,11 +85,16 @@ std::vector<Token> tokenize(std::string &CodigoFuente) {
             }
 
             if (buf == "->") {
-                tokens.push_back({buf, TokenType::Identifier, lexer.line, lexer.pos});
+                tokens.push_back({buf, TokenType::Operator, lexer.line, lexer.pos});
                 buf = "";
             }
 
-            else if (buf == "char") {
+            else if (buf == "string") {
+                tokens.push_back({buf, TokenType::Keyword, lexer.line, lexer.pos});
+                buf = "";
+            }
+
+            else if (buf == "float") {
                 tokens.push_back({buf, TokenType::Keyword, lexer.line, lexer.pos});
                 buf = "";
             }
@@ -184,15 +189,22 @@ std::vector<Token> tokenize(std::string &CodigoFuente) {
                 buf = "";
             }
 
+            if (CodigoFuente[i] == '"') {
+                tokens.push_back({buf, TokenType::String, lexer.line, lexer.pos});
+                buf = "";
+            }
+
             if (CodigoFuente[i] == '/') {
                 tokens.push_back({"/", TokenType::Operator, lexer.line, lexer.pos});
                 buf = "";
             }
 
+            /*
             if (CodigoFuente[i] == '=') {
                 tokens.push_back({"=", TokenType::Operator, lexer.line, lexer.pos});
                 buf = "";
             }
+            */
 
             if (CodigoFuente[i] == '(') {
                 tokens.push_back({"(", TokenType::OpenParen, lexer.line, lexer.pos});
@@ -216,6 +228,9 @@ std::vector<Token> tokenize(std::string &CodigoFuente) {
 
             
 
+        } else {
+            std::cerr << "CARÁCTER DESCONOCIDO: LINEA: " << lexer.line << std::endl;
+            exit(1);
         }
 
     }
